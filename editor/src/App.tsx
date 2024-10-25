@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import HtmlDisplay from './htmlDisplay'
 import { FaEdit, FaBars } from 'react-icons/fa';
 import { VscSplitHorizontal } from 'react-icons/vsc';
+import init, {md_to_html} from '../wasm_pkg/md_to_html.js';
 
 
 
@@ -11,9 +12,17 @@ function App() {
   const [editMode, setEditMode] = useState(false);
   const [splitView, setSplitView] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [htmlString, setHtmlString] = useState("<h1 class='text-red-500'>Hello World</h1><p >This <em>is</em> some <strong>HTML content</strong>.</p>");
 
+  const [markdown, setMarkdown] = useState("# Hello World");
+  const [html, setHtml] = useState("");
 
+  useEffect(() => {
+    const initializeWasm = async () => {
+      await init();
+      setHtml(md_to_html(markdown));
+    };
+    initializeWasm();
+  }, [markdown])
   return (
     <>
       {/* App Bar */}
@@ -67,19 +76,19 @@ function App() {
           <div className={`flex-1 ${splitView ? 'w-1/2' : 'w-full'}`}>
               <textarea
                 className='w-full h-64 p-2 border border-gray-300 rounded-md'
-                value={htmlString}
-                onChange={(e) => setHtmlString(e.target.value)}
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
               />
               </div>
             {splitView && (
               <div className={`flex-1 w-1/2`}>
-                <HtmlDisplay htmlContent={htmlString} />
+                <HtmlDisplay htmlContent={html} />
               </div>
               
             )}
           </div>
         :
-        <HtmlDisplay htmlContent={htmlString} />
+        <HtmlDisplay htmlContent={html} />
           
         }
         
