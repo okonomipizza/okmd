@@ -1,0 +1,92 @@
+import { useState } from 'react'
+import './App.css'
+import HtmlDisplay from './htmlDisplay'
+import { FaEdit, FaBars } from 'react-icons/fa';
+import { VscSplitHorizontal } from 'react-icons/vsc';
+
+
+
+
+function App() {
+  const [editMode, setEditMode] = useState(false);
+  const [splitView, setSplitView] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [htmlString, setHtmlString] = useState("<h1 class='text-red-500'>Hello World</h1><p >This <em>is</em> some <strong>HTML content</strong>.</p>");
+
+
+  return (
+    <>
+      {/* App Bar */}
+      <div className='bg-gray-800 text-white p-4 fixed top-0 left-0 right-0 z-10'>
+        <div className='flex justify-between items-center'>
+        <h1 className='text-xl font-bold'>OK Markdown</h1>
+        <button
+            onClick={() => setSidebarOpen(!sidebarOpen)} // Toggle sidebar
+            className='p-2 text-white rounded'
+          >
+            <FaBars /> {/* Sidebar toggle icon */}
+          </button>
+        </div>
+      </div>
+
+      {/* Tool Bar */}
+      <div className='bg-gray-700 text-white p-2 fixed top-16 left-0 right-0 z-10'>
+        <div className='flex justify-start space-x-4'>
+        <button
+          onClick={() => setEditMode(prev => !prev)}
+          className='mb-4 p-2 bg-blue-500 text-white rounded'
+        >
+          <FaEdit />
+        </button>
+        <button
+          onClick={() => setSplitView(prev => !prev)}
+          className='mb-4 p-2 bg-blue-500 text-white rounded'
+        >
+          <VscSplitHorizontal />
+        </button>
+        </div>
+      </div>
+
+      {/* Sidebar */}
+      {sidebarOpen && (
+        <div className="fixed top-16 left-0 w-64 h-full bg-gray-800 text-white p-4 z-20 shadow-lg">
+          <h2 className="text-lg font-bold">Sidebar</h2>
+          {/* TODO Add sidebar content here */}
+          <ul className="mt-4 space-y-2">
+            <li><a href="#" className="hover:underline">Link 1</a></li>
+            <li><a href="#" className="hover:underline">Link 2</a></li>
+            <li><a href="#" className="hover:underline">Link 3</a></li>
+          </ul>
+        </div>
+      )}
+
+      {/* Main content */}
+      <div className='mt-32'>
+        {editMode? 
+          <div className={`flex gap-4 ${splitView ? 'flex-row' : 'flex-col'}`}>
+          <div className={`flex-1 ${splitView ? 'w-1/2' : 'w-full'}`}>
+              <textarea
+                className='w-full h-64 p-2 border border-gray-300 rounded-md'
+                value={htmlString}
+                onChange={(e) => setHtmlString(e.target.value)}
+              />
+              </div>
+            {splitView && (
+              <div className={`flex-1 w-1/2`}>
+                <HtmlDisplay htmlContent={htmlString} />
+              </div>
+              
+            )}
+          </div>
+        :
+        <HtmlDisplay htmlContent={htmlString} />
+          
+        }
+        
+      </div>
+      
+    </>
+  )
+}
+
+export default App
